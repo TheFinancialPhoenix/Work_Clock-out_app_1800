@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clock-Out Calculator</title>
+  <style>
+    body {
+      background: #0d0d0d;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      background: #1a1a1a;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    label {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0 18px 0;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      background: #2a2a2a;
+      color: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      background: #4a4aff;
+      color: white;
+      font-weight: bold;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Clock-Out Time Calculator</h2>
+
+    <label>Login Time:</label>
+    <input type="time" id="loginTime" required />
+
+    <label>Break Duration (minutes):</label>
+    <input type="number" id="breakMinutes" value="30" min="0" />
+
+    <button onclick="calculateClockOut()">Calculate</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function to12Hour(date) {
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      const minStr = minutes.toString().padStart(2,'0');
+      return `${hours}:${minStr} ${ampm}`;
+    }
+
+    function calculateClockOut() {
+      const login = document.getElementById('loginTime').value;
+      const breakMin = parseInt(document.getElementById('breakMinutes').value || 0);
+
+      if (!login) {
+        document.getElementById('result').innerText = 'Enter login time.';
+        return;
+      }
+
+      const [hours, minutes] = login.split(':').map(Number);
+      const loginDate = new Date();
+      loginDate.setHours(hours, minutes, 0, 0);
+
+      const totalMinutes = 8 * 60 + breakMin;
+      const clockOutDate = new Date(loginDate.getTime() + totalMinutes * 60000);
+
+      const formatted = to12Hour(clockOutDate);
+      document.getElementById('result').innerText = `Clock-out time: ${formatted}`;
+    }
+  </script>
+</body>
+</html>
